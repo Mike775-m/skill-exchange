@@ -19,7 +19,7 @@ of frontend polish with Bootstrap.
 ## Setup
 
 ```bash
-git clone https://github.com/Mike775-m/community-skill-exchange.git
+git clone https://github.com/Mike775-m/skill-exchange.git
 cd community-skill-exchange
 python3 -m venv venv
 source venv/bin/activate
