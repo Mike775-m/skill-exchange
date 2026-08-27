@@ -1,0 +1,35 @@
+{% load static %}
+<div class="card skill-card">
+    {% if skill.image %}
+    <img src="{{ skill.image.url }}" class="card-img-top" alt="{{ skill.title }}">
+    {% else %}
+    <div class="card-img-top d-flex align-items-center justify-content-center">
+        <i class="bi bi-lightbulb text-white fs-1"></i>
+    </div>
+    {% endif %}
+    <div class="card-body d-flex flex-column">
+        <div class="d-flex justify-content-between align-items-start mb-2">
+            {% if skill.category %}
+            <span class="category-pill">{{ skill.category.name }}</span>
+            {% else %}
+            <span class="category-pill">General</span>
+            {% endif %}
+            {% if user.is_authenticated %}
+            <form method="post" action="{% url 'skill-favorite' skill.slug %}" class="ms-2">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                <button type="submit" class="favorite-btn {% if skill.id in favorited_ids %}is-favorited{% endif %}" title="Toggle favorite">
+                    <i class="bi {% if skill.id in favorited_ids %}bi-heart-fill{% else %}bi-heart{% endif %}"></i>
+                </button>
+            </form>
+            {% endif %}
+        </div>
+        <h5 class="fw-heading mb-1"><a href="{{ skill.get_absolute_url }}" class="text-decoration-none text-reset">{{ skill.title }}</a></h5>
+        <p class="text-muted small mb-2"><i class="bi bi-geo-alt me-1"></i>{{ skill.location }}</p>
+        <p class="text-muted small flex-grow-1">{{ skill.description|truncatewords:18 }}</p>
+        <div class="d-flex justify-content-between align-items-center mt-2 pt-2 border-top">
+            <small class="text-muted"><i class="bi bi-person-circle me-1"></i>{{ skill.owner.first_name|default:skill.owner.username }}</small>
+            <a href="{{ skill.get_absolute_url }}" class="btn btn-sm btn-outline-primary">View Details</a>
+        </div>
+    </div>
+</div>

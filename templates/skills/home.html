@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Community Skill Exchange &mdash; Trade Skills, Not Cash{% endblock %}
+
+{% block content %}
+<section class="hero-section">
+    <div class="container">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-6">
+                <span class="hero-badge"><i class="bi bi-stars"></i> A neighborhood of makers &amp; helpers</span>
+                <h1 class="mt-3">Share what you know. <br>Learn what you don't.</h1>
+                <p class="lead text-muted mt-3" style="max-width: 520px;">
+                    Community Skill Exchange connects neighbors who want to trade tutoring, design,
+                    repairs, photography, and more &mdash; no money required, just generosity.
+                </p>
+                <div class="d-flex flex-wrap gap-3 mt-4">
+                    <a href="{% url 'skill-list' %}" class="btn btn-primary btn-lg px-4"><i class="bi bi-search me-2"></i>Browse Skills</a>
+                    {% if user.is_authenticated %}
+                    <a href="{% url 'skill-create' %}" class="btn btn-accent btn-lg px-4"><i class="bi bi-plus-lg me-2"></i>Post a Skill</a>
+                    {% else %}
+                    <a href="{% url 'signup' %}" class="btn btn-accent btn-lg px-4"><i class="bi bi-person-plus me-2"></i>Join Free</a>
+                    {% endif %}
+                </div>
+                <div class="hero-stats">
+                    <div>
+                        <div class="stat-num">{{ total_skills }}</div>
+                        <div class="stat-label">Skills Listed</div>
+                    </div>
+                    <div>
+                        <div class="stat-num">{{ total_users }}</div>
+                        <div class="stat-label">Active Members</div>
+                    </div>
+                    <div>
+                        <div class="stat-num">{{ total_categories }}</div>
+                        <div class="stat-label">Categories</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="row g-3">
+                    <div class="col-6">
+                        <div class="skill-card p-3">
+                            <i class="bi bi-palette2 fs-2" style="color: var(--se-primary);"></i>
+                            <h6 class="fw-heading mt-2 mb-1">Graphic Design</h6>
+                            <p class="text-muted small mb-0">Logos, branding &amp; more</p>
+                        </div>
+                    </div>
+                    <div class="col-6 mt-4">
+                        <div class="skill-card p-3">
+                            <i class="bi bi-code-slash fs-2" style="color: var(--se-accent);"></i>
+                            <h6 class="fw-heading mt-2 mb-1">Web Development</h6>
+                            <p class="text-muted small mb-0">Sites, apps &amp; fixes</p>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="skill-card p-3">
+                            <i class="bi bi-mortarboard fs-2" style="color: var(--se-primary);"></i>
+                            <h6 class="fw-heading mt-2 mb-1">Tutoring</h6>
+                            <p class="text-muted small mb-0">Languages, math &amp; music</p>
+                        </div>
+                    </div>
+                    <div class="col-6 mt-4">
+                        <div class="skill-card p-3">
+                            <i class="bi bi-camera fs-2" style="color: var(--se-accent);"></i>
+                            <h6 class="fw-heading mt-2 mb-1">Photography</h6>
+                            <p class="text-muted small mb-0">Events &amp; portraits</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="container py-5">
+    <div class="d-flex justify-content-between align-items-end mb-4">
+        <div>
+            <h2 class="section-title">Explore by Category</h2>
+            <p class="section-subtitle mb-0">Find exactly the kind of help you're looking for.</p>
+        </div>
+        <a href="{% url 'skill-list' %}" class="btn btn-sm btn-outline-primary d-none d-md-inline-block">View all <i class="bi bi-arrow-right"></i></a>
+    </div>
+    <div class="row g-3">
+        {% for category in categories %}
+        <div class="col-6 col-md-3">
+            <a href="{% url 'skill-list' %}?category={{ category.slug }}" class="category-tile">
+                <i class="bi {{ category.icon|default:'bi-tools' }}"></i>
+                <span class="fw-semibold">{{ category.name }}</span>
+            </a>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center text-muted py-4">
+            No categories yet &mdash; check back soon, or add some from the admin panel.
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="container py-5">
+    <div class="d-flex justify-content-between align-items-end mb-4">
+        <div>
+            <h2 class="section-title">Newest Listings</h2>
+            <p class="section-subtitle mb-0">Fresh skills posted by the community.</p>
+        </div>
+    </div>
+    <div class="row g-4">
+        {% for skill in latest_skills %}
+        <div class="col-md-6 col-lg-4">
+            {% include 'skills/_skill_card.html' with skill=skill %}
+        </div>
+        {% empty %}
+        <div class="col-12 text-center text-muted py-5">
+            <i class="bi bi-inboxes fs-1 d-block mb-3"></i>
+            No skills posted yet. Be the first to <a href="{% url 'skill-create' %}">share your talent</a>!
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="container pb-5">
+    <div class="surface-card text-center py-5" style="background: linear-gradient(135deg, var(--se-primary), var(--se-primary-dark)); border:none;">
+        <h2 class="text-white fw-bold">Have a skill worth sharing?</h2>
+        <p class="text-white-50 mb-4">It takes less than two minutes to post a listing and start helping neighbors.</p>
+        {% if user.is_authenticated %}
+        <a href="{% url 'skill-create' %}" class="btn btn-accent btn-lg px-4">Post Your Skill</a>
+        {% else %}
+        <a href="{% url 'signup' %}" class="btn btn-accent btn-lg px-4">Get Started Free</a>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

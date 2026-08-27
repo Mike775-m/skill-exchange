@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% block title %}Browse Skills &mdash; Community Skill Exchange{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="mb-4">
+        <h1 class="section-title">Browse Skills</h1>
+        <p class="section-subtitle">Search and filter listings from the community.</p>
+    </div>
+
+    <form method="get" class="surface-card mb-4">
+        <div class="row g-3 align-items-end">
+            <div class="col-md-6">
+                <label class="form-label small fw-semibold">Search</label>
+                {{ form.q }}
+            </div>
+            <div class="col-md-4">
+                <label class="form-label small fw-semibold">Category</label>
+                {{ form.category }}
+            </div>
+            <div class="col-md-2 d-grid">
+                <button type="submit" class="btn btn-primary"><i class="bi bi-search me-1"></i>Search</button>
+            </div>
+        </div>
+        {% if query or selected_category %}
+        <div class="mt-3">
+            <a href="{% url 'skill-list' %}" class="small text-muted"><i class="bi bi-x-circle me-1"></i>Clear filters</a>
+        </div>
+        {% endif %}
+    </form>
+
+    <p class="text-muted mb-4">{{ page_obj.paginator.count }} skill{{ page_obj.paginator.count|pluralize }} found</p>
+
+    <div class="row g-4">
+        {% for skill in skills %}
+        <div class="col-md-6 col-lg-4">
+            {% include 'skills/_skill_card.html' with skill=skill %}
+        </div>
+        {% empty %}
+        <div class="col-12 text-center text-muted py-5">
+            <i class="bi bi-search fs-1 d-block mb-3"></i>
+            No skills matched your search. Try a different keyword or category.
+        </div>
+        {% endfor %}
+    </div>
+
+    {% if is_paginated %}
+    <nav class="mt-5" aria-label="Skill pagination">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}">Previous</a>
+            </li>
+            {% else %}
+            <li class="page-item disabled"><span class="page-link">Previous</span></li>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+            <li class="page-item {% if num == page_obj.number %}active{% endif %}">
+                <a class="page-link" href="?page={{ num }}{% if query %}&q={{ query }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}">{{ num }}</a>
+            </li>
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}">Next</a>
+            </li>
+            {% else %}
+            <li class="page-item disabled"><span class="page-link">Next</span></li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+{% endblock %}

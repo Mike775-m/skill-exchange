@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% block title %}{{ skill.title }} &mdash; Community Skill Exchange{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row g-5">
+        <div class="col-lg-8">
+            {% if skill.image %}
+            <img src="{{ skill.image.url }}" class="img-fluid rounded-4 mb-4 w-100" style="max-height: 380px; object-fit: cover;" alt="{{ skill.title }}">
+            {% endif %}
+
+            {% if skill.category %}
+            <span class="category-pill mb-3">{{ skill.category.name }}</span>
+            {% endif %}
+            <h1 class="fw-heading mt-2">{{ skill.title }}</h1>
+            <p class="text-muted">
+                <i class="bi bi-geo-alt me-1"></i>{{ skill.location }}
+                &nbsp;&middot;&nbsp;
+                <i class="bi bi-calendar3 me-1"></i>Posted {{ skill.date_posted|timesince }} ago
+            </p>
+
+            <div class="surface-card mt-4">
+                <h5 class="fw-heading mb-3">Description</h5>
+                <p style="white-space: pre-line;">{{ skill.description }}</p>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="surface-card mb-4">
+                <div class="d-flex align-items-center mb-3">
+                    <img src="{{ skill.owner.profile.profile_picture.url }}" class="avatar-sm me-2" style="width:48px;height:48px;" alt="{{ skill.owner.username }}">
+                    <div>
+                        <div class="fw-semibold">{{ skill.owner.first_name|default:skill.owner.username }} {{ skill.owner.last_name }}</div>
+                        <a href="{% url 'profile-detail' skill.owner.username %}" class="small text-decoration-none">View profile</a>
+                    </div>
+                </div>
+                <hr>
+                <h6 class="fw-semibold small text-uppercase text-muted mb-2">Contact</h6>
+                <p class="mb-3"><i class="bi bi-chat-dots me-2"></i>{{ skill.contact_info }}</p>
+
+                {% if user.is_authenticated %}
+                    <a href="mailto:?subject=Interested in your skill: {{ skill.title }}" class="btn btn-primary w-100 mb-2">
+                        <i class="bi bi-envelope me-2"></i>Contact Skill Owner
+                    </a>
+                    <form method="post" action="{% url 'skill-favorite' skill.slug %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                        <button type="submit" class="btn w-100 {% if is_favorited %}btn-danger{% else %}btn-outline-secondary{% endif %}">
+                            <i class="bi {% if is_favorited %}bi-heart-fill{% else %}bi-heart{% endif %} me-2"></i>
+                            {% if is_favorited %}Remove Favorite{% else %}Add to Favorites{% endif %}
+                        </button>
+                    </form>
+                {% else %}
+                    <a href="{% url 'login' %}?next={{ request.path }}" class="btn btn-primary w-100">
+                        <i class="bi bi-box-arrow-in-right me-2"></i>Log In to Contact
+                    </a>
+                {% endif %}
+
+                {% if user == skill.owner %}
+                <hr>
+                <div class="d-flex gap-2">
+                    <a href="{% url 'skill-update' skill.slug %}" class="btn btn-outline-secondary btn-sm flex-fill"><i class="bi bi-pencil"></i> Edit</a>
+                    <a href="{% url 'skill-delete' skill.slug %}" class="btn btn-outline-danger btn-sm flex-fill"><i class="bi bi-trash"></i> Delete</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

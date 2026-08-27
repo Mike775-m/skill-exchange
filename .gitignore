@@ -1,0 +1,13 @@
+__pycache__/
+*.py[cod]
+*.sqlite3
+db.sqlite3
+venv/
+env/
+.env
+staticfiles/
+media/profile_pics/*
+!media/profile_pics/default.png
+media/skill_images/*
+.DS_Store
+*.log
