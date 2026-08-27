@@ -40,8 +40,3 @@ python manage.py shell < seed_data.py
 
 Django, SQLite, Bootstrap 5, Pillow for image uploads.
 
-## Notes
-
-Still rough around the edges in a few spots (image handling could use
-compression, search is pretty basic). Might come back and add messaging
-between users at some point.
